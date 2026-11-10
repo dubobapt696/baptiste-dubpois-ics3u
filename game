@@ -1,0 +1,351 @@
+#import the two library
+import pygame
+import random
+
+pygame.init()
+
+#screen dimension
+screen_h = 1000
+screen_w = 2000
+# Create the game window
+screen = pygame.display.set_mode((screen_w, screen_h))
+pygame.display.set_caption("Moving Square")
+
+# Set up our colours
+WHITE = (255, 255, 255)
+SKY_BLUE = (135, 206, 235)
+BLUE = (0, 0, 255)
+RED = (255, 0, 0)
+GREEN = (0, 255, 0)
+BLACK = (0, 0, 0)
+BROWN = (200, 100, 50)
+SKIN = (255, 150, 75)
+#setup the player and his variables
+player_x = 100
+player_y = 665
+player_h = 35
+player_w = 20
+player_speed = 6
+
+
+
+#setup gravity
+gravity = 4 #speed of the gravity
+on_ground = False #variable if player touche the ground
+object_dif = 1000000 #just setup with a random num
+
+#setup the ennemies and their variables
+ennemy1_x = 1000
+ennemy1_y = 500
+ennemy1_size = 30
+ennemy1_speed = 2
+
+ennemy2_x = 500
+ennemy2_y = 500
+ennemy2_size = 30
+ennemy2_speed = 2
+
+#create the exit
+exit_door = pygame.Rect(1850, 650, 25, 50)
+
+#new ennemies evrery 10 sec
+#ennemy_spawn = pygame.USEREVENT + 1
+#pygame.time.set_timer(ennemy_spawn, 5000)
+
+#create the ground
+floor_h = 300 #high of the ground
+#all other vriables in a list
+decors = [
+    pygame.Rect(0, 700, 700, floor_h), #floor
+    pygame.Rect(800, 700, 500, floor_h), #floor
+    pygame.Rect(1800, 700, 200, floor_h)
+]
+#create the object and obstacles
+#define the different size
+object1_h = 60 
+object2_h = 70
+object3_h = 10
+object4_h = 10
+object_y = 640 #setup the high
+#creat a list with all the variables
+objects = [
+    pygame.Rect(1000, object_y, 50, object1_h), #rock
+    pygame.Rect(500, object_y - 10, 40, object2_h),
+    pygame.Rect(705, object_y, 40, object3_h),
+    pygame.Rect(1300, object_y - 20, 50, object4_h),
+    pygame.Rect(1450, object_y - 30, 50, object4_h),
+    pygame.Rect(1450, object_y - 110, 50, object4_h),
+    pygame.Rect(1450, object_y - 200, 50, object4_h),
+    pygame.Rect(1650, object_y - 50, 25, object4_h),
+    pygame.Rect(1730, object_y - 20, 25, object4_h),
+]
+# define all the clouds
+clouds = [
+    pygame.Rect(1500, 250, 75, 30), #cloud
+    pygame.Rect(500, 300, 75, 20),
+    pygame.Rect(800, 230, 90, 40)
+]
+
+#setup the game
+clock = pygame.time.Clock()
+running = True
+won = False
+
+#main game loop
+while running:
+
+    #check for event
+
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            running = False
+    
+    #check fot the key pressed
+    keys = pygame.key.get_pressed()
+
+    if not won:
+
+        #setup gravity
+        #for the player
+        player_y += gravity #make the player go down
+        player = pygame.Rect(player_x, player_y, player_w, player_h) #SETUP THE PLAYER
+
+        #check fro the collision so player stop at the ground
+        for decor in decors:
+            if player.colliderect(decor):
+                player_y -= player_speed # put a bigger speed for the player to make him walk
+        for object in objects:
+            if player.colliderect(object):
+                player_y -= player_speed 
+        #for the ennemies  
+        # same but for two ennemies 
+        ennemy1_y += gravity
+        ennemy1 = pygame.Rect(ennemy1_x, ennemy1_y, ennemy1_size, ennemy1_size)
+                        
+        for decor in decors:
+            if ennemy1.colliderect(decor):
+                ennemy1_y -= ennemy1_speed + 2
+        for object in objects:
+            if ennemy1.colliderect(object):
+                ennemy1_y -= ennemy1_speed + 2 #make the both speed the same so he just moove on the ground
+
+        ennemy2_y += gravity
+        ennemy2 = pygame.Rect(ennemy2_x, ennemy2_y, ennemy2_size, ennemy2_size)
+                                
+        for decor in decors:
+            if ennemy2.colliderect(decor):
+                ennemy2_y -= ennemy2_speed + 2
+        for object in objects:
+            if ennemy2.colliderect(object):
+                ennemy2_y -= ennemy2_speed + 2
+                        
+        
+                
+        
+                
+        #setup the movement 
+        #move left
+        if keys[pygame.K_LEFT]:
+            player_x -= player_speed #move the player to the left
+            player = pygame.Rect(player_x, player_y, player_w, player_h) #define the player
+
+            #check for tthe collisons
+            for decor in decors:  #with the ground
+                if player.colliderect(decor):
+                    player_x += player_speed
+            for object in objects:  #with the rocks
+                if player.colliderect(object):
+                    player_x += player_speed
+
+        #move right
+        if keys[pygame.K_RIGHT]:
+            player_x += player_speed
+            player = pygame.Rect(player_x, player_y, player_w, player_h)
+            for decor in decors:
+                if player.colliderect(decor):
+                    player_x -= player_speed
+            for object in objects:
+                if player.colliderect(object):
+                    player_x -= player_speed
+
+        #move down
+        if keys[pygame.K_DOWN]:
+            player_y += player_speed
+            player = pygame.Rect(player_x, player_y, player_w, player_h)
+        
+            for decor in decors:
+                if player.colliderect(decor):
+                    player_y -= player_speed
+            for object in objects:
+                if player.colliderect(object):
+                    player_y -= player_speed
+        
+        #move up
+        if keys[pygame.K_UP]:
+            player_y -= player_speed
+            player = pygame.Rect(player_x, player_y, player_w, player_h)
+                
+            for decor in decors:
+                if player.colliderect(decor):
+                    player_y += player_speed
+            for object in objects:
+                if player.colliderect(object):
+                    player_y += player_speed
+        
+        
+        #jump
+        if keys[pygame.K_SPACE]:
+            
+            player = pygame.Rect(player_x, player_y, player_w, player_h) #setup the player
+            #check if the player touch the ground so he can infint jump in the air
+            for decor in decors:
+                ground_dif = player_y - floor_h # calculate the distance between the player and the ground
+                
+                if ground_dif > 360 and ground_dif < 370: #check if the distamce is ok
+                    
+                    player_y = player_y - 100 #make the player jump
+
+            #sam, vut for the objects
+            for object in objects:
+                if player_x >= 1000 and player_x <= 1050: #check if the player is on the frist object
+                    object_dif = player_y - object_y #calculate the distance
+                if player_x >= 500 and player_x <= 540:#check if the player is on the second object
+                    object_dif = player_y - object_y
+                if player_x >= 705 and player_x <= 745:#check if the player is on the third object
+                    object_dif = player_y - object_y
+                #print("player y =",player_y, "   object dif=", object_dif)
+                if object_dif > -50 and object_dif < -35: #check if the distance is ok
+                     
+                    player_y = player_y - 100 #make the player 100 points higher to jump
+
+        # setup the movement for the ennemies
+        #if player to the left of the ennemy
+        if player_x < ennemy1_x:
+            ennemy1_x -= ennemy1_speed
+            ennemy1 = pygame.Rect(ennemy1_x, ennemy1_y, ennemy1_size, ennemy1_size)
+        #if player to the right of the ennemy
+        if player_x > ennemy1_x:
+            ennemy1_x += ennemy1_speed
+            ennemy1 = pygame.Rect(ennemy1_x, ennemy1_y, ennemy1_size, ennemy1_size)
+    #stop the ennemies and setup collision
+    #if it s going to the left block the right size
+        if player_x < ennemy1_x:
+            for decor in decors:
+                if ennemy1.colliderect(decor):
+                    ennemy1_x += ennemy1_speed
+            for object in objects:
+                if ennemy1.colliderect(object):
+                    ennemy1_x += ennemy1_speed
+         #if it s going to the right block the left size
+        if player_x > ennemy1_x:
+            for decor in decors:
+                if ennemy1.colliderect(decor):
+                    ennemy1_x -= ennemy1_speed
+            for object in objects:
+                if ennemy1.colliderect(object):
+                    ennemy1_x -= ennemy1_speed
+        #same but for the second ennemy
+        if player_x < ennemy2_x:
+            ennemy2_x -= ennemy2_speed
+            ennemy2 = pygame.Rect(ennemy2_x, ennemy2_y, ennemy2_size, ennemy2_size)
+        if player_x > ennemy2_x:
+            ennemy2_x += ennemy2_speed
+            ennemy2 = pygame.Rect(ennemy2_x, ennemy2_y, ennemy2_size, ennemy2_size)
+        if player_x < ennemy2_x:
+            for decor in decors:
+                if ennemy2.colliderect(decor):
+                    ennemy2_x += ennemy2_speed
+            for object in objects:
+                if ennemy2.colliderect(object):
+                    ennemy2_x += ennemy2_speed
+        if player_x > ennemy2_x:
+            for decor in decors:
+                if ennemy2.colliderect(decor):
+                    ennemy2_x -= ennemy2_speed
+            for object in objects:
+                if ennemy2.colliderect(object):
+                    ennemy2_x -= ennemy2_speed
+        
+
+
+                          
+        #setup border
+
+        if player_x < 0:
+            player_x = 0
+
+        if player_x > screen_w - player_w:
+            player_x = screen_w - player_w
+
+        if player_y < 0:
+            player_y = 0
+
+        if player_y > screen_h - player_h:
+            player_y = screen_h - player_h
+
+        #update the position and the player, and the two ennemies
+        player = pygame.Rect(player_x, player_y, player_w, player_h)
+        ennemy1 = pygame.Rect(ennemy1_x, ennemy1_y, ennemy1_size, ennemy1_size)
+        ennemy2 = pygame.Rect(ennemy2_x, ennemy2_y, ennemy2_size, ennemy2_size)
+
+        #check if the player is at the exit to stop the game 
+        if player.colliderect(exit_door):
+            won = True
+
+    #draw the sky
+    screen.fill(SKY_BLUE)
+
+    #Draw the decor, the ogject and the cloud with thte rights colors
+    for decor in decors:
+        pygame.draw.rect(screen, GREEN, decor)
+    for object in objects:
+        pygame.draw.rect(screen, BLACK, object)
+    for cloud in clouds:
+        pygame.draw.rect(screen, WHITE, cloud)
+
+
+    #draw the exit
+    pygame.draw.rect(screen, BROWN, exit_door)
+
+    #draw the player in different part to have different colours
+    player = pygame.Rect(player_x, player_y, player_w, player_h) #draw the top
+    player_leg = pygame.Rect(player_x, player_y, player_w, player_h - 20) #draw the leg
+    player_head = pygame.Rect(player_x, player_y - 15, player_w, player_h - 20) #draw the head
+    pygame.draw.rect(screen, BLUE, player)
+    pygame.draw.rect(screen, RED, player_leg )
+    pygame.draw.rect(screen, SKIN, player_head )
+
+    #draw the ennemies
+    """"
+    for event in pygame.event.get():
+        if event.type == ennemy_spawn:
+            print("eeee")
+            pygame.draw.rect(screen, BROWN, ennemy1)
+            pygame.draw.rect(screen, BROWN, ennemy2)
+    """
+    #win message
+    if won:
+        font = pygame.font.SysFont(None, 48)
+        message = font.render("WINNNN!", True, BLACK)
+        screen.blit(message, (1000,500))
+
+    #update display
+    pygame.display.flip()
+
+    #limit the game to 60 fps
+    clock.tick(60)
+
+    #close the game if fall
+    if player_y > 950:
+        pygame.quit()
+
+    if player.colliderect(ennemy1):
+        pygame.quit()
+    if player.colliderect(ennemy2):
+        pygame.quit()
+
+
+#close 
+pygame.quit()
+        
+
