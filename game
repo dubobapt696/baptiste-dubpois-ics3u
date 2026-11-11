@@ -338,12 +338,12 @@ while running:
 
     #close the game if fall
     if player_y > 950:
-        pygame.quit()
+        running = False
 
     if player.colliderect(ennemy1):
-        pygame.quit()
+        running = False
     if player.colliderect(ennemy2):
-        pygame.quit()
+        running = False
 
 
 #close 
