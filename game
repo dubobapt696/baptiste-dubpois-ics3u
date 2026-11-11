@@ -330,12 +330,6 @@ while running:
         message = font.render("WINNNN!", True, BLACK)
         screen.blit(message, (1000,500))
 
-    #update display
-    pygame.display.flip()
-
-    #limit the game to 60 fps
-    clock.tick(60)
-
     #close the game if fall
     if player_y > 950:
         running = False
@@ -344,6 +338,12 @@ while running:
         running = False
     if player.colliderect(ennemy2):
         running = False
+
+    #update display
+    pygame.display.flip()
+
+    #limit the game to 60 fps
+    clock.tick(60)
 
 
 #close 
